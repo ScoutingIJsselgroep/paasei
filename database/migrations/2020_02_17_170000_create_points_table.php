@@ -19,10 +19,12 @@ class CreatePointsTable extends Migration
             $table->string('code', 255)->nullable()->defaut(null)->unique();
 			$table->double('lat', 10, 8);
 			$table->double('lng', 11, 8);
-			$table->unsignedInteger('next_point_id')->nullable()->defaut(null)->unique();
+			$table->boolean('public')->default(0);
+
+            $table->string('color', 7)->default('#E91C2F');
+			$table->string('second_color', 7)->default('#B21121');
+
             $table->timestamps();
-			
-			$table->foreign('next_point_id', 'fk_point_next_point')->references('id')->on('points')->onUpdate('cascade')->onDelete('set null');
         });
     }
 

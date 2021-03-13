@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Client;
 use Carbon\Carbon;
+use Validator;
 
 /**
  * Description of ClientsController
@@ -20,7 +21,30 @@ use Carbon\Carbon;
  */
 
 class ClientsController extends Controller {
-	
+	public function add(Request $request) {
+		if(!in_array($request->ip(), ['85.145.6.41'])) {
+			return abort(401);
+		}
+		
+		$v = Validator::make($request->all(), [
+			'name' => 'required',
+			'email' => 'required|email|unique:\App\Models\Client,email',
+		]);
+        if ($v->fails()) {
+            return $v->errors();
+        }
+
+		$client = new Client;
+		$client->name = $request->name;
+		$client->email = $request->email;
+		$client->code = Str::random(15);
+		if($client->save()) {
+			return $client;
+		} else {
+			return [false];
+		}
+	}
+
 	public function search(Request $request) {
 	
 		if($request->session()->has('client_id')) {

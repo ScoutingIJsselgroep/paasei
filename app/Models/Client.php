@@ -24,18 +24,8 @@ class Client extends Model {
      */
     protected $fillable = [
         'name',
-		'color',
-		'second_color',
+		'email',
     ];
-	
-	
-	public function route() {
-		return $this->belongsTo(Route::class);
-	}
-	
-	public function clientLocations() {
-		return $this->hasMany(ClientLocation::class);
-	}
 	
 	public function clientPoints() {
 		return $this->hasMany(ClientPoint::class);

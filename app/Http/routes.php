@@ -19,6 +19,7 @@ Route::get('start', ['as' => 'points.start', 'uses' => 'PointsController@startCo
 Route::post('check', ['as' => 'points.check', 'uses' => 'PointsController@checkCode']);
 Route::post('update', ['as' => 'points.update', 'uses' => 'PointsController@updateLocation']);
 
+Route::any('clients/add', ['as' => 'clients.add', 'uses' => 'ClientsController@add']);
 
 Route::name('admin.')->middleware('auth')->group(function () {
     Route::any('admin/routes', ['as' => 'routes', 'uses' => 'RoutesController@admin']);
