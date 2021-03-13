@@ -1,4 +1,4 @@
-# QR route
+# Ei zoeken
 
 Via een gevonden qr code die via de browser kan worden gescand wordt een volgende locatie ontgrendeld waar weer gezocht kan worden naar nieuwe een code.
 
