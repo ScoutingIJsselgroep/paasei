@@ -1,6 +1,6 @@
 {
-    "name": "QR route",
-    "short_name": "QR route",
+    "name": "Paasei",
+    "short_name": "Paasei",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -13,10 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#dfe6fa",
-    "background_color": "#dfe6fa",
-    "start_url": "https://novazembla.pikoe.nl/",
-    "display": "standalone",
-    "orientation": "portrait",
-	"scope": "/"
+    "theme_color": "#fcdd07",
+    "background_color": "#fcdd07",
+    "display": "standalone"
 }

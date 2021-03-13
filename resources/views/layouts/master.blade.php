@@ -10,9 +10,9 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 	<link rel="manifest" href="/site.webmanifest">
-	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#dfe6fa">
-	<meta name="msapplication-TileColor" content="#dfe6fa">
-	<meta name="theme-color" content="#ffffff">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#fcdd07">
+	<meta name="msapplication-TileColor" content="#fcdd07">
+	<meta name="theme-color" content="#fcdd07">
 	<base href="{{ url('/') }}/">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	
