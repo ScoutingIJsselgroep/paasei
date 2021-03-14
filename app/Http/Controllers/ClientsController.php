@@ -22,7 +22,7 @@ use Validator;
 
 class ClientsController extends Controller {
 	public function add(Request $request) {
-		if(!in_array($request->ip(), ['85.145.6.41'])) {
+		if(!in_array($request->ip(), ['85.145.6.41', '31.187.138.45', '185.94.230.117'])) {
 			return abort(401);
 		}
 		
