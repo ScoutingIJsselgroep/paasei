@@ -25,13 +25,14 @@ class ClientsController extends Controller {
 		if(!in_array($request->ip(), ['85.145.6.41', '31.187.138.45', '185.94.230.117'])) {
 			return abort(401);
 		}
-		
 		$v = Validator::make($request->all(), [
 			'name' => 'required',
 			'email' => 'required|email|unique:\App\Models\Client,email',
 		]);
         if ($v->fails()) {
-            return $v->errors();
+            return [
+				'errors' => $v->errors(),
+			];
         }
 
 		$client = new Client;
