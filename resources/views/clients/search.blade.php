@@ -22,6 +22,61 @@
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
+
+	L.SVGIcon = L.DivIcon.extend({
+		options: {
+			className: 'base-icon',
+			html: '',
+			color: '#ff0000',
+			// borderColor: '#bf0000',
+			iconSize: [34, 50],
+			shadowSize: [52, 50]
+		},
+		initialize: function(options) {
+			options = L.Util.setOptions(this, options);
+			if (!options.borderColor) { 
+				options.borderColor = options.color;
+			}
+		},
+		createIcon: function(el, old) {
+			return $('<div class="svg-marker ' + this.options.className + '" style="color: ' + this.options.borderColor + '; margin-left: -17px; margin-top: -50px; width: 34px; height: 50px;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="34px" height="50px" viewBox="-10 -10 330 490" xml:space="preserve"><g><path fill="' + this.options.color + '" stroke="' + this.options.borderColor + '" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-alignment="center" d="M159.75,0.401C71.522,0.401,0,71.923,0,160.151c0,41.685,19.502,80,69.75,129.75   c50.5,50,84.725,142.523,90,190c5.292-47.477,39.623-140,90.281-190C300.438,240.15,320,201.836,320,160.151   C320,71.923,248.254,0.401,159.75,0.401z"/></g></svg>' + this.options.html + '</div>')[0];
+		},
+		createShadow(el, old) {
+			return $('<div class="svg-marker-shadow ' + this.options.className + '-shadow" style="margin-left: -17px; margin-top: -50px; width: 52px; height: 50px;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="52px" height="50px" viewBox="-10 -10 510 490" xml:space="preserve"><filter id="blurShadow"><feGaussianBlur in="SourceGraphic" stdDeviation="15" /></filter><g transform="rotate(10 -50 -100) translate(300 194) skewX(-40) scale(1 0.5)"><path filter="url(#blurShadow)" fill="rgba(0,0,0,0.5)" d="M159.75,0.401C71.522,0.401,0,71.923,0,160.151c0,41.685,19.502,80,69.75,129.75   c50.5,50,84.725,142.523,90,190c5.292-47.477,39.623-140,90.281-190C300.438,240.15,320,201.836,320,160.151   C320,71.923,248.254,0.401,159.75,0.401z"/></g></svg></div>')[0];
+		}
+	});
+	L.svgIcon = function(options) {
+		return new L.SVGIcon(options);
+	};
+
+	L.EiIcon = L.DivIcon.extend({
+		options: {
+			className: 'base-icon',
+			html: '',
+			color: '#ff0000',
+			// borderColor: '#bf0000',
+			iconSize: [34, 58],
+			shadowSize: [52, 50]
+		},
+		initialize: function(options) {
+			options = L.Util.setOptions(this, options);
+			if (!options.borderColor) { 
+				options.borderColor = options.color;
+			}
+		},
+		createIcon: function(el, old) {
+			// return $('<div class="svg-marker ' + this.options.className + '" style="color: ' + this.options.borderColor + '; margin-left: -17px; margin-top: -50px; width: 34px; height: 50px;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="34px" height="50px" viewBox="-10 -10 330 490" xml:space="preserve"><g><path fill="' + this.options.color + '" stroke="' + this.options.borderColor + '" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-alignment="center" d="M159.75,0.401C71.522,0.401,0,71.923,0,160.151c0,41.685,19.502,80,69.75,129.75   c50.5,50,84.725,142.523,90,190c5.292-47.477,39.623-140,90.281-190C300.438,240.15,320,201.836,320,160.151   C320,71.923,248.254,0.401,159.75,0.401z"/></g></svg>' + this.options.html + '</div>')[0];
+
+			return $('<div class="svg-marker ei-marker ' + this.options.className + '" style="color: ' + this.options.borderColor + '; margin-left: -17px; margin-top: -58px; width: 34px; height: 58px;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="34px" height="60px" viewBox="-10 -10 330 590"><g><path fill="' + this.options.color + '" stroke="' + this.options.borderColor + '" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-alignment="center" d="M316.176,226.464c-5.299-31.656-15.027-68.599-30.025-103.412c-3.377-7.105-6.891-14.065-10.49-20.85   C253.066,59.615,211.594,4.535,161.034,3.778c-0.177,0-0.354-0.006-0.53-0.005c-0.173-0.001-0.347,0.005-0.521,0.005   c-50.076,0.755-91.152,55.837-113.529,98.425c-14.091,26.813-26.849,56.357-35.187,86.841c-2.639,10.349-4.852,20.474-6.656,30.174   c-5.284,31.967-4.745,64.312,5.034,95.055c9.524,26.035,25.395,50.083,45.285,71.366c16.545,17.159,34.585,33.167,49.435,51.542   c22.751,28.153,38.072,61.377,47.219,96.251c4.026,13.746,7.032,28.286,8.92,43.84c2.149-17.873,5.761-34.406,10.686-49.938   c9.387-32.643,24.368-63.646,45.998-90.153c7.96-9.755,16.829-18.84,25.897-27.786c6.148-6.909,12.554-13.817,19.202-20.782   C304.399,344.495,329.42,288.012,316.176,226.464z"/></g></svg>' + this.options.html + '</div>')[0];
+
+		},
+		createShadow(el, old) {
+			return $('<div class="svg-marker-shadow ei-marker-shadow ' + this.options.className + '-shadow" style="margin-left: -17px; margin-top: -50px; width: 52px; height: 50px;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="52px" height="50px" viewBox="-10 -10 510 490" xml:space="preserve"><filter id="blurShadow"><feGaussianBlur in="SourceGraphic" stdDeviation="15" /></filter><g transform="rotate(10 -50 -100) translate(300 194) skewX(-40) scale(1 0.5)"><path filter="url(#blurShadow)" fill="rgba(0,0,0,0.5)" d="M159.75,0.401C71.522,0.401,0,71.923,0,160.151c0,41.685,19.502,80,69.75,129.75   c50.5,50,84.725,142.523,90,190c5.292-47.477,39.623-140,90.281-190C300.438,240.15,320,201.836,320,160.151   C320,71.923,248.254,0.401,159.75,0.401z"/></g></svg></div>')[0];
+		}
+	});
+	L.eiIcon = function(options) {
+		return new L.EiIcon(options);
+	};
 	
 	var markerIcon = L.icon({
 		iconUrl: 'img/marker.png',
@@ -46,17 +101,6 @@
 		
 		popupAnchor: [0, -43] // point from which the popup should open relative to the iconAnchor
 	});
-	var markerSearchIcon = L.icon({
-		iconUrl: 'img/marker-search.png',
-		iconSize: [42, 45],
-		iconAnchor: [21, 45],
-		
-		shadowUrl: 'img/marker-shadow.png',
-		shadowSize: [57, 38], // size of the shadow
-		shadowAnchor: [15, 34],  // the same for the shadow
-		
-		popupAnchor: [0, -43] // point from which the popup should open relative to the iconAnchor
-	});
 	
 	var foundCodes = [];
 	var foundLine = L.polyline([], {
@@ -65,9 +109,6 @@
 		dashArray: '3 4'
 	}).addTo(map);
 	var searchCode = false;
-	var searchMarker = L.marker([52.20342, 6.25114], {
-		icon: markerSearchIcon
-	});
 	
 	var searchLine = L.polyline([], {
 		color: '#ff6600',
@@ -82,6 +123,20 @@
 		weight: 2
 	}).addTo(map);
 	
+	@foreach($points as $point)
+		marker = L.marker([{{ $point->lat }}, {{ $point->lng }}], {
+			icon: L.eiIcon({
+				html: '<i class="icon-egg-{{ ($point->id % 5) + 1 }}"></i>',
+				color: '{{ $point->color }}',
+				borderColor: '{{ $point->second_color }}',
+				draggable: true
+			}),
+			point_id: '{{ $point->id }}'
+		}).addTo(map).on('click', function() {
+			// todo
+		});
+	@endforeach
+
 	@if($client && $client->route)
 		@php
 			$searchPoint = $client->route->startPoint;
@@ -102,7 +157,7 @@
 		@if($searchPoint)
 			searchCode = [{{ $searchPoint->lat }}, {{ $searchPoint->lng }}];
 			// weergeven als er wat weer te geven valt
-			searchMarker.setLatLng(searchCode).addTo(map);
+			//searchMarker.setLatLng(searchCode).addTo(map);
 			searchLine.setLatLngs([searchCode]);
 		@endif
 		
@@ -209,7 +264,7 @@
 					searchCode = [data.search.lat, data.search.lng];
 					
 					// weergeven als er wat weer te geven valt
-					searchMarker.setLatLng(searchCode).addTo(map);
+					// searchMarker.setLatLng(searchCode).addTo(map);
 					if(positionHistory.length) {
 						searchLine.setLatLngs([searchCode, positionHistory[positionHistory.length - 1]]);
 						map.panInsideBounds(L.latLngBounds(searchCode, positionHistory[positionHistory.length - 1]), {
@@ -226,7 +281,7 @@
 				} else {
 					searchCode = false;
 					
-					searchMarker.remove();
+					//searchMarker.remove();
 					searchLine.remove();
 				}
 				
@@ -249,7 +304,7 @@
 		});
 	}
 	
-	searchMarker.on('click', function() {
+	/*searchMarker.on('click', function() {
 	    $('#status').removeClass('active');
 		$('#qrScanner').addClass('active');
 		scanner.start();
@@ -257,7 +312,7 @@
 			paddingTopLeft: [25, window.innerWidth + 65],
 			paddingBottomRight: [25, 5]
 		});
-	});
+	});*/
 	
 	$('#qrScanner .button.close').click(function() {
 		scanner.stop();

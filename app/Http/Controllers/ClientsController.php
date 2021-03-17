@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Client;
+use App\Models\Point;
 use Carbon\Carbon;
 use Validator;
 
@@ -53,8 +54,12 @@ class ClientsController extends Controller {
 		} else {
 			$client = false;	
 		}
+
+		
+
 		return view('clients.search', [
 			'client' => $client,
+			'points' => Point::where('public', '=', 1)->get(),
 		]);
 	}
 			

@@ -1,3 +1,14 @@
+@font-face {
+	font-family: 'icons';
+	src:  url('../fonts/icons.eot?sxxwkx');
+	src:  url('../fonts/icons.eot?sxxwkx#iefix') format('embedded-opentype'),
+	  url('../fonts/icons.ttf?sxxwkx') format('truetype'),
+	  url('../fonts/icons.woff?sxxwkx') format('woff'),
+	  url('../fonts/icons.svg?sxxwkx#icons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
 * {
 	
 }
@@ -72,7 +83,7 @@ label.input-group-append {
 	right: 10px;
 	top: 50px;
 }
-.button#addRoute {
+.button#addPoint {
 	right: 10px;
 	top: 90px;
 }
@@ -195,11 +206,46 @@ div.svg-marker {
 	position: relative;
 }
 div.svg-marker i {
-	top: 8px;
+	top: 3px;
     right: 0;
-    left: 0;
-    font-size: 16px;
+    left: 1px;
+    font-size: 37px;
     display: block;
     position: absolute;
     text-align: center;
+}
+
+div.svg-marker i.status {
+	left: 23px;
+	top: -4px;
+    font-size: 16px;
+}
+[class^="icon-"], [class*=" icon-"] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'icons' !important;
+	speak: never;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+  
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.icon-egg-1:before {
+	content: "\e900";
+}
+.icon-egg-2:before {
+	content: "\e901";
+}
+.icon-egg-3:before {
+	content: "\e902";
+}
+.icon-egg-4:before {
+	content: "\e903";
+}
+.icon-egg-5:before {
+	content: "\e904";
 }

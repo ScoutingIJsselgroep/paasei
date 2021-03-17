@@ -23,9 +23,12 @@ class Point extends Model {
      * @var array
      */
     protected $fillable = [
-        'code',
+        'public',
+		'color',
+		'second_color',
 		'lat',
 		'lng',
+        'code',
     ];
 
     /**
@@ -35,16 +38,4 @@ class Point extends Model {
      */
     protected $casts = [
     ];
-	
-	public function route() {
-		return $this->belongsTo(Route::class);
-	}
-	
-	public function nextPoint() {
-		return $this->belongsTo(Point::class, 'next_point_id');
-	}
-	
-	public function prevPoint() {
-		return $this->hasOne(Point::class, 'next_point_id');
-	}
 }
