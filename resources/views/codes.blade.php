@@ -1,62 +1,45 @@
 @extends('layouts.master')
 
 @section('content')
-<div id="codes">
-	<div>bemanning</div>
-	<div>Witte Swaen</div>
-	<div>ijsbeer</div>
-	<div>Nova</div>
-	<div>Zembla</div>
-	<div>Nova Zembla</div>
-	<div>Schip</div>
-	<div>IJsco</div>
-	<div>scheepsbeschuit</div>
-	<div>stuurman</div>
-	<div>Willem Barentsz</div>
-	<div>ontdekkingsreis</div>
-	<div>Poolcirkel</div>
-	<div>IJskap</div>
-	<div>Toendra</div>
-	<div>Perestrojka</div>
-	<div>Glasnost</div>
-	<div>Scout</div>
-	<div>Iglo</div>
-	<div>Mook</div>
-	<div>HIT</div>
-	<div>Route</div>
-	<div>Kompas</div>
-	<div>Uitkijk</div>
-	
-	<div>IJberg</div>
-	<div>Groenland</div>
-	<div>IJsland</div>
-	<div>Kajuit</div>
-	<div>Ijspalijs</div>
-	<div>Noodweer</div>
-	
-	<div>Noorwegen</div>
-	<div>Finland</div>
-	<div>Alaska</div>
-	<div>Poolcirkel</div>
-	<div>IJsvisser</div>
-	<div>Hozen</div>
-</div>
+<div id="codes"></div>
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
-	$('#codes > div').each(function() {
-		new QRCode(this, {
-			text: this.innerHTML + Math.floor(Math.random() * 100),
-			width: 148,
-			height: 148,
+	function randomCharacters(length) {
+		var result = '',
+			characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+			charactersLength = characters.length,
+			length = length > 0 ? length : (5 + Math.ceil(Math.random() * 3));
+		for (var i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+		return result;
+	}
+
+	function randomColor() {
+		var result = '#',
+			characters = '0123456789abcdef',
+			charactersLength = characters.length;
+		for(var i = 0; i < 6; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+		return result;
+	}
+	for(var i = 0; i < 16; i++) {
+		var div = $('<div class="c-' + (i%5) + '" style="color:' + randomColor() + ';"><div style="color:' + randomColor() + ';"></div></div>');
+		$('#codes').append(div);
+		
+		new QRCode(div[0], {
+			text: 'https://ei.ijssel.group/c/' + randomCharacters(),
+			width: 166,
+			height: 166,
 			colorDark : "#000000",
 			colorLight : "#ffffff",
 			correctLevel : QRCode.CorrectLevel.H
 		});
-	});
-	
-	
+
+	}
 </script>
 @endsection
 

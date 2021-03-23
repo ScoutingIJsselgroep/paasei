@@ -16,7 +16,8 @@ Auth::routes(['register' => false]);
 Route::get('/', ['as' => 'clients.search', 'uses' => 'ClientsController@search']);
 
 Route::get('start', ['as' => 'clients.start', 'uses' => 'ClientsController@start']);
-Route::get('check', ['as' => 'clients.check', 'uses' => 'ClientsController@check']);
+Route::get('c/{code}', ['uses' => 'ClientsController@check']);
+Route::post('check', ['as' => 'clients.check', 'uses' => 'ClientsController@check']);
 
 Route::any('clients/add', ['as' => 'clients.add', 'uses' => 'ClientsController@add']);
 

@@ -10,6 +10,10 @@
 	<div id="qrScanner" class="overlay">
 		<video muted playsinline autoplay></video>
 		<div class="button close"><i class="fa fa-times"></i></div>
+		<form action="{{ route('clients.check') }}" method="POST" id="checkForm">
+			@csrf
+			<input id="code" name="code" type="hidden">
+		</form>
 	</div>
 	<div id="status" class="overlay">
 		<div id="load" class="text-center"><i class="fas fa-spinner fa-pulse"></i></div>
@@ -207,70 +211,12 @@
 
 	function setResult(result) {
 		scanner.stop();
-		$('#qrScanner').removeClass('active');
-		$('#status').addClass('load');
+		//$('#qrScanner').removeClass('active');
+		//$('#status').addClass('load');
 		
-		$.ajax({
-			url: '{{ route('clients.check') }}',
-			method: 'POST',
-			data: {
-				code: result
-			},
-			context: document.body
-		}).done(function(data) {
-			$('#status').removeClass('load');
-			if(data.error) {
-				$('#status #message').html(data.error);
-				$('#status').addClass('active');
-			} else {
-				
-				/*
-				L.marker([52.20142, 6.20114], {
-					icon: markerIcon
-				}).addTo(map);
-				*/
-				if(data.hasOwnProperty('search')) {
-					searchCode = [data.search.lat, data.search.lng];
-					
-					// weergeven als er wat weer te geven valt
-					// searchMarker.setLatLng(searchCode).addTo(map);
-					if(positionHistory.length) {
-						searchLine.setLatLngs([searchCode, positionHistory[positionHistory.length - 1]]);
-						map.panInsideBounds(L.latLngBounds(searchCode, positionHistory[positionHistory.length - 1]), {
-							paddingTopLeft: [25, 55],
-							paddingBottomRight: [25, 5]
-						});
-						map.fitBounds(L.latLngBounds(searchCode, positionHistory[positionHistory.length - 1]));
-					} else {
-						map.panInside(searchCode, {
-							paddingTopLeft: [25, 55],
-							paddingBottomRight: [25, 5]
-						});
-					}
-				} else {
-					searchCode = false;
-					
-					//searchMarker.remove();
-					searchLine.remove();
-				}
-				
-				if(data.hasOwnProperty('found')) {
-					var foundCode = [data.found.lat, data.found.lng];
-					
-					foundCodes.push(foundCode);
-					foundLine.setLatLngs(foundCodes);
-					
-					L.marker(foundCode, {
-						icon: markerIcon
-					}).addTo(map);
-				}
-				
-				if(data.message) {
-					$('#status #message').html(data.message);
-					$('#status').addClass('active');
-				}
-			}
-		});
+		$('#checkForm #code').val(result);
+		$('#checkForm').submit();
+		
 	}
 	
 	/*searchMarker.on('click', function() {

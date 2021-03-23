@@ -87,9 +87,13 @@ class ClientsController extends Controller {
 		]);
 	}
 
-	public function check(Request $request) {
+	public function check(Request $request, string $code = null) {
 		sleep(1);
 		
+		if($code = null) {
+			$code = trim(str_replace(url('c'), '', $request->get('code', '')), '/');
+		}
+
 		if($request->session()->has('client_id')) {
 			$client = Client::find($request->session()->get('client_id'));
 			if($client) {
@@ -104,7 +108,7 @@ class ClientsController extends Controller {
 				}
 
 				foreach($availablePoints as $availablePoint) {
-					if($availablePoint->code == $request->code) {
+					if($availablePoint->code && $availablePoint->code == $code) {
 						if($availablePoint->found) {
 							return redirect('/')->with([
 								'message' => 'Deze code heb je al een keer gevonden, zoek nieuwe eieren op de andere plekken die je ziet op de kaart',
@@ -134,17 +138,16 @@ class ClientsController extends Controller {
 						}
 					}
 				}
+				return redirect('/')->with([
+					'message' => 'Deze code zoeken we (nog) niet'
+				]);
 			}
-			return redirect('/')->with([
-				'message' => 'Deze code zoeken we (nog) niet'
-			]);
-		} else {
-			return redirect('/')->with([
-				'message' => 'Het lijkt er op dat je de link in de mail nog niet hebt geopend',
-				// todo, button toevoegen
-				'button' => 'Ik heb me nog niet aangemeld'
-			]);
 		}
+		return redirect('/')->with([
+			'message' => 'Het lijkt er op dat je de link in de mail nog niet hebt geopend',
+			// todo, button toevoegen
+			'button' => 'Ik heb me nog niet aangemeld'
+		]);
 	}
 
 	public function admin(Request $request) {
