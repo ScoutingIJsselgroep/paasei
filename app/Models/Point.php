@@ -24,6 +24,7 @@ class Point extends Model {
      */
     protected $fillable = [
         'public',
+		'icon',
 		'color',
 		'second_color',
 		'lat',

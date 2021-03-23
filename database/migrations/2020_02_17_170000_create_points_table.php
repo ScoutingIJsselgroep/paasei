@@ -17,6 +17,7 @@ class CreatePointsTable extends Migration
             $table->increments('id');
 			$table->unsignedInteger('route_id')->nullable()->defaut(null);
             $table->string('code', 255)->nullable()->defaut(null)->unique();
+            $table->string('icon', 255)->default('icon-egg-1');
 			$table->double('lat', 10, 8);
 			$table->double('lng', 11, 8);
 			$table->boolean('public')->default(0);

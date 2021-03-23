@@ -17,14 +17,41 @@
 		<div id="message"></div>
 	</div>
 	
-	<form id="newPoint" class="overlay form-overlay" method="post">
+	<form id="pointForm" class="overlay form-overlay" method="post">
 		@csrf
 		<div class="button close"><i class="fa fa-times"></i></div>
 		<h2>Nieuw punt toevoegen</h2>
 
-		// TODO icon
+		<div class="form-group row">
+			<label for="color" class="d-none d-sm-block col-sm-2 col-form-label">Icoon</label>
+			<div class="col-sm-10">
 
-		// TODO public
+				<label>
+					<input type="radio" name="icon" value="icon-egg-1" id="icon-egg-1" checked>
+					<i class="icon-egg-1"></i>
+					&nbsp;
+				</label>
+				<label>
+					<input type="radio" name="icon" value="icon-egg-2" id="icon-egg-2">
+					<i class="icon-egg-2"></i>
+					&nbsp;
+				</label>
+				<label>
+					<input type="radio" name="icon" value="icon-egg-3" id="icon-egg-3">
+					<i class="icon-egg-3"></i>
+					&nbsp;
+				</label>
+				<label>
+					<input type="radio" name="icon" value="icon-egg-4" id="icon-egg-4">
+					<i class="icon-egg-4"></i>
+					&nbsp;
+				</label>
+				<label>
+					<input type="radio" name="icon" value="icon-egg-5" id="icon-egg-5">
+					<i class="icon-egg-5"></i>
+				</label>
+			</div>
+		</div>
 
 		<div class="form-group row">
 			<label for="color" class="d-none d-sm-block col-sm-2 col-form-label">Kleur</label>
@@ -43,29 +70,23 @@
 				<div class="input-group">
 					<input type="text" class="form-control color" id="pointSecondColor" name="second_color" value="#0000ff" required placeholder="Kleur" pattern="^#[A-Fa-f0-9]{6}$" readonly>
 					<label for="pointSecondColor" class="input-group-append">
-					    <span class="input-group-text" id="pointColorPreview"><i class="fas fa-palette"></i></span>
+					    <span class="input-group-text" id="pointSecondColorPreview"><i class="fas fa-palette"></i></span>
 					</label>
 				</div>
 			</div>
 		</div>
 		
-		<input type="hidden" id="new_lat" name="lat">
-		<input type="hidden" id="new_lng" name="lng">
+		<div class="form-group row">
+			<label for="color" class="d-none d-sm-block col-sm-2 col-form-label">Openbaar</label>
+			<div class="col-sm-10">
+				<input type="hidden" name="public" value="0">
+				<label>
+					<input type="checkbox" name="public" value="1" id="public">
+					Ei is zichtbaar als gestart wordt
+				</label>
+			</div>
+		</div>
 
-		<button class="btn btn-primary" name="add" value="1"><i class="fas fa-save"></i> Opslaan</button>
-	</form>
-		
-	<form id="edit" class="overlay form-overlay" method="post">
-		@csrf
-		<div class="button close"><i class="fa fa-times"></i></div>
-		<h2>Punt bewerken</h2>
-		<input type="hidden" id="point_id" name="point_id">
-		
-		<input type="hidden" id="org_lat">
-		<input type="hidden" id="org_lng">
-		<input type="hidden" id="edit_lat" name="lat">
-		<input type="hidden" id="edit_lng" name="lng">
-		
 		<div class="form-group row">
 			<label for="qr_code" class="d-none d-sm-block col-sm-2 col-form-label">QR code</label>
 			<div class="col-sm-10">
@@ -80,25 +101,19 @@
 				</div>
 			</div>
 		</div>
-		
-		<button class="btn btn-primary" name="edit" value="1"><i class="fas fa-save"></i> Opslaan</button>
-		
-		
-		
-		<button class="btn btn-primary" name="delete" value="1"><i class="far fa-trash-alt"></i> Verwijderen</button>
-	</form>
-	
-	<form id="insert" class="overlay form-overlay" method="post">
-		@csrf
-		<div class="button close"><i class="fa fa-times"></i></div>
-		<h2>Punt bewerken</h2>
-		<input type="hidden" id="insert_point_id" name="point_id">
-		<input type="hidden" id="position" name="position">
-		
-		<input type="hidden" id="add_lat" name="lat">
-		<input type="hidden" id="add_lng" name="lng">
-		
-		<button class="btn btn-primary" name="insert" value="1"><i class="fas fa-save"></i> Punt toevoegen</button>
+
+		<input type="hidden" id="lat" name="lat">
+		<input type="hidden" id="lng" name="lng">
+
+
+		<input type="hidden" id="org_lat">
+		<input type="hidden" id="org_lng">
+		<input type="hidden" id="point_id" name="point_id">
+
+		<button class="btn btn-primary add" name="add" value="1"><i class="fas fa-save"></i> Toevoegen</button>
+
+		<button class="btn btn-primary edit" name="edit" value="1"><i class="fas fa-save"></i> Bewerken</button>
+		<button class="btn btn-primary edit" name="delete" value="1"><i class="far fa-trash-alt"></i> Verwijderen</button>
 	</form>
 @endsection
 
@@ -125,27 +140,46 @@
 		
 	});
 	$('#addPoint').click(function() {
-		$('form#newPoint').addClass('active');
+		$('form#pointForm .edit').hide();
+		$('form#pointForm .add').show();
+		$('form#pointForm #icon-egg-1').prop('checked', true);
+		$('form#pointForm #pointColor').val('#ff0000');
+		$('form#pointForm #pointSecondColor').val('#0000ff');
+		$('form#pointForm #public').prop('checked', false);
+		
+		$('form#pointForm #lat').val(map.getCenter().lat);
+		$('form#pointForm #lng').val(map.getCenter().lng);
+		$('form#pointForm #org_lat').val('');
+		$('form#pointForm #org_lng').val('');
+		$('form#pointForm #point_id').val('');
+		$('form#pointForm #qr_code').val('');
+
+		$('form#pointForm').addClass('active');
+
 		newMarker.setIcon(L.eiIcon({
 			color: '#ff0000',
 			borderColor: '#0000ff',
 			html: '<i class="icon-egg-1"></i>'
 		}));
-		newMarker.addTo(map).setLatLng(map.getCenter()).bounce(1);
-		map.panBy([0, $('form#newPoint').height() / -2]);
 		
-		$('#new_lat').val(map.getCenter().lat);
-		$('#new_lng').val(map.getCenter().lng);
+		if(editMarker != newMarker) {
+			newMarker.addTo(map).setLatLng(map.getCenter()).bounce(1);
+			map.panBy([0, $('form#pointForm').height() / -2]);
+		}
+		editMarker = newMarker;
 	});
-	$('form#newPoint .close').click(function() {
-		$('form#newPoint').removeClass('active');
-		newMarker.remove();
+	$('form#pointForm .close').click(function() {
+		$('form#pointForm').removeClass('active');
 	});
 	
-	$('form#edit .close').click(function() {
-		$('form#edit').removeClass('active');
-		editMarker.setLatLng([$('#org_lat').val(), $('#org_lng').val()]);
-		editMarker.dragging.disable();
+	$('form#pointform .close').click(function() {
+		$('form#pointform').removeClass('active');
+		if(editMarker == newMarker) {
+			newMarker.remove();
+		} else {
+			editMarker.setLatLng([$('#org_lat').val(), $('#org_lng').val()]);
+			editMarker.dragging.disable();
+		}
 		editMarker.stopBouncing();
 		editMarker = null;
 	});
@@ -154,6 +188,7 @@
 		useAlpha: false,
 		format: 'hex'
 	});
+
 	$('#pointColor').on('colorpickerChange', function(e) {
 		var borderColor = e.color.api('hsl');
 		if(borderColor.api('lightness') < 50) {
@@ -167,10 +202,10 @@
 			'border-color': borderColor.toHexString(),
 			'color': borderColor.toHexString()
 		});
-		newMarker.setIcon(L.eiIcon({
-			color: e.color.toHexString(),
+		editMarker.setIcon(L.eiIcon({
+			color: $('#pointColor').val(),
 			borderColor: $('#pointSecondColor').val(),
-			html: '<i class="icon-egg-1"></i>'
+			html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
 		}));
 	});
 	$('#pointSecondColor').on('colorpickerChange', function(e) {
@@ -186,10 +221,17 @@
 			'border-color': borderColor.toHexString(),
 			'color': borderColor.toHexString()
 		});
-		newMarker.setIcon(L.eiIcon({
+		editMarker.setIcon(L.eiIcon({
 			color: $('#pointColor').val(),
-			borderColor: e.color.toHexString(),
-			html: '<i class="icon-egg-1"></i>'
+			borderColor: $('#pointSecondColor').val(),
+			html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
+		}));
+	});
+	$('form#pointForm input[name=icon]').on('click change', function() {
+		editMarker.setIcon(L.eiIcon({
+			color: $('#pointColor').val(),
+			borderColor: $('#pointSecondColor').val(),
+			html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
 		}));
 	});
 	
@@ -275,11 +317,8 @@
 		}),
 		draggable: true
 	}).on('dragend', function() {
-		$('#new_lat').val(this.getLatLng().lat);
-		$('#new_lng').val(this.getLatLng().lng);
-		
-		$('#add_lat').val(this.getLatLng().lat);
-		$('#add_lng').val(this.getLatLng().lng);
+		$('#lat').val(this.getLatLng().lat);
+		$('#lng').val(this.getLatLng().lng);
 	}).on('drag', function() {
 		
 	});
@@ -312,13 +351,19 @@
 		latLngs.push([{{ $point->lat }}, {{ $point->lng }}]);
 		marker = L.marker([{{ $point->lat }}, {{ $point->lng }}], {
 			icon: L.eiIcon({
-				html: '<i class="icon-egg-1"></i>{!! (empty($point->code) ? '' : '<i class="fas fa-qrcode status"></i>') !!}',
+				html: '<i class="{{ $point->icon }}"></i>{!! (empty($point->code) ? '' : '<i class="fas fa-qrcode status"></i>') . ($point->public ? '<i class="fas fa-lock-open public"></i>' : '') !!}',
 				color: '{{ $point->color }}',
 				borderColor: '{{ $point->second_color }}',
 				draggable: true
 			}),
 			point_id: '{{ $point->id }}',
 			code: '{{ $point->code }}',
+			icon_class: '{{ $point->icon }}',
+			public: {{ $point->public }},
+			
+			color: '{{ $point->color }}',
+			second_color: '{{ $point->second_color }}',
+
 			opacity:{!! (empty($point->code) ? '1.0' : '0.5') !!}
 		}).addTo(map).on('click', function() {
 			if(editMarker != this) {
@@ -329,22 +374,31 @@
 				}
 				this.bounce(2);
 			}
-			$('form#edit').addClass('active');
-			$('#point_id').val(this.options.point_id);
-			$('#qr_code').val(this.options.code);
-			$('#org_lat').val(this.getLatLng().lat);
-			$('#org_lng').val(this.getLatLng().lng);
-			$('#edit_lat').val(this.getLatLng().lat);
-			$('#edit_lng').val(this.getLatLng().lng);
+
+			$('form#pointForm .add').hide();
+			$('form#pointForm .edit').show();
+			$('form#pointForm #' + this.options.icon_class).prop('checked', true);
+			$('form#pointForm #pointColor').val(this.options.color);
+			$('form#pointForm #pointSecondColor').val(this.options.second_color);
+			$('form#pointForm #public').prop('checked', this.options.public);
 			
+			$('form#pointForm #lat').val(this.getLatLng().lat);
+			$('form#pointForm #lng').val(this.getLatLng().lng);
+			$('form#pointForm #org_lat').val(this.getLatLng().lat);
+			$('form#pointForm #org_lng').val(this.getLatLng().lng);
+			$('form#pointForm #point_id').val(this.options.point_id);
+			$('form#pointForm #qr_code').val(this.options.code);
+			
+			$('form#pointForm').addClass('active');
+
 			map.panInside(this.getLatLng(), {
-				paddingTopLeft: [25, $('form#edit').height() + 65],
+				paddingTopLeft: [25, $('form#pointform').height() + 65],
 				paddingBottomRight: [25, 5]
 			});
 			editMarker = this;
 		}).on('dragend', function() {
-			$('#edit_lat').val(this.getLatLng().lat);
-			$('#edit_lng').val(this.getLatLng().lng);
+			$('form#pointForm #lat').val(this.getLatLng().lat);
+			$('form#pointForm #lng').val(this.getLatLng().lng);
 		}).on('dragstart', function() {
 			this.stopBouncing();
 		}).on('drag', function() {
@@ -390,11 +444,11 @@
 		$('#qrScanner').removeClass('active');
 		
 		$('#qr_code').val(result);
-		$('form#edit').addClass('active');
+		$('form#pointform').addClass('active');
 	}
 	
 	$('#qr_code_label').on('click', function() {
-		$('form#edit').removeClass('active');
+		$('form#pointform').removeClass('active');
 		$('#qrScanner').addClass('active');
 		scanner.start();
 		map.panInside(this.getLatLng(), {
@@ -409,7 +463,7 @@
 	$('#qrScanner .button.close').click(function() {
 		scanner.stop();
 		$('#qrScanner').removeClass('active');
-		$('form#edit').addClass('active');
+		$('form#pointform').addClass('active');
 	});
 	map.invalidateSize();
 </script>

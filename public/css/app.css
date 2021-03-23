@@ -219,6 +219,13 @@ div.svg-marker i.status {
 	left: 23px;
 	top: -4px;
     font-size: 16px;
+	color: #ccc;
+}
+div.svg-marker i.public {
+	left: -20px;
+	top: -4px;
+    font-size: 16px;
+	color: #ccc;
 }
 [class^="icon-"], [class*=" icon-"] {
 	/* use !important to prevent issues with browser extensions that change fonts */

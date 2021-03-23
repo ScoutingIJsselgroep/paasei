@@ -126,7 +126,7 @@
 	@foreach($points as $point)
 		marker = L.marker([{{ $point->lat }}, {{ $point->lng }}], {
 			icon: L.eiIcon({
-				html: '<i class="icon-egg-{{ ($point->id % 5) + 1 }}"></i>',
+				html: '<i class="{{ $point->icon }}"></i>',
 				color: '{{ $point->color }}',
 				borderColor: '{{ $point->second_color }}',
 				draggable: true

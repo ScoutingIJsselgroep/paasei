@@ -36,9 +36,7 @@ class RoutesController extends Controller {
 				]);
 			}
 			
-			$point->lat = $request->lat;
-			$point->lng = $request->lng;
-			$point->code = $request->code;
+			$point->fill($request->all());
 			$point->save();
 			
 			return redirect()->back()->with([
