@@ -5,7 +5,6 @@
 	<div id="fullScreen" class="button"><i class="fas fa-compress"></i><i class="fas fa-expand"></i></div>
 	<div id="centerMap" class="button"><i class="far fa-compass"></i></div>
 	<div id="addPoint" class="button"><i class="fas fa-map-marker-alt"></i></div>
-	<div id="addClient" class="button"><i class="fas fa-user-plus"></i></div>
 	
 	<div id="qrScanner" class="overlay">
 		<video muted playsinline autoplay></video>
@@ -20,7 +19,8 @@
 	<form id="pointForm" class="overlay form-overlay" method="post">
 		@csrf
 		<div class="button close"><i class="fa fa-times"></i></div>
-		<h2>Nieuw punt toevoegen</h2>
+		<h2 class="add">Nieuw punt toevoegen</h2>
+		<h2 class="edit">Punt bewerken</h2>
 
 		<div class="form-group row">
 			<label for="color" class="d-none d-sm-block col-sm-2 col-form-label">Icoon</label>
@@ -170,10 +170,6 @@
 	});
 	$('form#pointForm .close').click(function() {
 		$('form#pointForm').removeClass('active');
-	});
-	
-	$('form#pointform .close').click(function() {
-		$('form#pointform').removeClass('active');
 		if(editMarker == newMarker) {
 			newMarker.remove();
 		} else {
@@ -392,7 +388,7 @@
 			$('form#pointForm').addClass('active');
 
 			map.panInside(this.getLatLng(), {
-				paddingTopLeft: [25, $('form#pointform').height() + 65],
+				paddingTopLeft: [25, $('form#pointForm').height() + 65],
 				paddingBottomRight: [25, 5]
 			});
 			editMarker = this;
@@ -444,14 +440,15 @@
 		$('#qrScanner').removeClass('active');
 		
 		$('#qr_code').val(result);
-		$('form#pointform').addClass('active');
+		$('form#pointForm').addClass('active');
 	}
 	
 	$('#qr_code_label').on('click', function() {
-		$('form#pointform').removeClass('active');
+		$('form#pointForm').removeClass('active');
+		console.log($('form#pointForm'));
 		$('#qrScanner').addClass('active');
 		scanner.start();
-		map.panInside(this.getLatLng(), {
+		map.panInside(editMarker.getLatLng(), {
 			paddingTopLeft: [25, window.innerWidth + 65],
 			paddingBottomRight: [25, 5]
 		});
@@ -463,7 +460,7 @@
 	$('#qrScanner .button.close').click(function() {
 		scanner.stop();
 		$('#qrScanner').removeClass('active');
-		$('form#pointform').addClass('active');
+		$('form#pointForm').addClass('active');
 	});
 	map.invalidateSize();
 </script>

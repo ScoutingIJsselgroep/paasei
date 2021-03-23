@@ -93,7 +93,7 @@
 				start = 0;
 			}).on('mouseup touchend', function() {
 				if(new Date().getTime() >= start + longpress) {
-					location.href = '{{ route('admin.routes') }}';
+					location.href = '{{ route('admin.points') }}';
 				} else {
 				    $(this).trigger('shortclick');
 				}
