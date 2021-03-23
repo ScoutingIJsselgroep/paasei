@@ -4,6 +4,9 @@
 	<div id="map" class="full-map"></div>
 	<div id="fullScreen" class="button"><i class="fas fa-compress"></i><i class="fas fa-expand"></i></div>
 
+	<div id="scanButton" class="button"><i class="fas fa-qrcode"></i></div>
+	<a href="/" id="refreshButton" class="button"><i class="fas fa-redo-alt"></i></a>
+
 	<div id="qrScanner" class="overlay">
 		<video muted playsinline autoplay></video>
 		<div class="button close"><i class="fa fa-times"></i></div>
@@ -123,7 +126,7 @@
 		weight: 2
 	}).addTo(map);
 	
-	@foreach($points as $point)
+	@foreach($client->availablePoints() as $point)
 		marker = L.marker([{{ $point->lat }}, {{ $point->lng }}], {
 			icon: L.eiIcon({
 				html: '<i class="{{ $point->icon }}"></i>',
@@ -131,7 +134,8 @@
 				borderColor: '{{ $point->second_color }}',
 				draggable: true
 			}),
-			point_id: '{{ $point->id }}'
+			point_id: '{{ $point->id }}',
+			opacity: '{{ $point->found ? 0.3 : 1.0 }}'
 		}).addTo(map).on('click', function() {
 			// todo
 		});
@@ -160,19 +164,7 @@
 			//searchMarker.setLatLng(searchCode).addTo(map);
 			searchLine.setLatLngs([searchCode]);
 		@endif
-		
-		@foreach($client->clientLocations as $clientLocation)
-			positionHistory.push([{{ $clientLocation->lat }}, {{ $clientLocation->lng }}]);
-		@endforeach
 	@endif
-	
-	var positionUpdateAt = 0,
-		positionPostAt = 0,
-	//	positionUpdateInterval = 2 * 60 * 1000,// 2 min, sturen als je verplaatst bent
-	//	positionPostInterval = 5 * 60 * 1000,// 5 min, sturen ook als je niet verplaatst bent
-		positionUpdateInterval = 2 * 1000,// 2 sec, sturen als je verplaatst bent
-		positionPostInterval = 5 * 1000,// 5 sec, sturen ook als je niet verplaatst bent
-		positionPostTimeout = null;
 	
 	if (navigator.geolocation) {
 		var positionAccuracy = L.circle([52.20142, 6.20114], {
@@ -196,33 +188,10 @@
 				if(searchCode) {
 					searchLine.setLatLngs([searchCode, [position.coords.latitude, position.coords.longitude]]);
 				}
-				positionUpdateAt = new Date().getTime();
-			}
-			
-			if(positionUpdateAt < positionPostAt + positionUpdateInterval) {
-				postPosition();
 			}
 		}
 		navigator.geolocation.watchPosition(currentPosition);
 	}
-	
-	function postPosition() {
-		clearTimeout(positionPostTimeout);
-		positionPostAt = new Date().getTime();
-		$.ajax({
-			url: '{{ route('points.update') }}',
-			method: 'POST',
-			data: positionHistory.length ? {
-				lat: positionHistory[positionHistory.length - 1][0],
-				lng: positionHistory[positionHistory.length - 1][1]
-			} : {},
-			context: document.body
-		}).done(function(data) {
-			console.log(data);
-		});
-		positionPostTimeout = setTimeout(postPosition, positionPostInterval);
-	}
-	postPosition();
 	
 	@if(session()->has('message'))
 	$('#status #message').text('{{ session()->get('message') }}');
@@ -242,7 +211,7 @@
 		$('#status').addClass('load');
 		
 		$.ajax({
-			url: '{{ route('points.check') }}',
+			url: '{{ route('clients.check') }}',
 			method: 'POST',
 			data: {
 				code: result
@@ -323,6 +292,11 @@
 		$('#status').removeClass('active');
 	});
 	
+	$('#scanButton').click(function() {
+	    $('#status').removeClass('active');
+		$('#qrScanner').addClass('active');
+		scanner.start();
+	});
 	$('#login').on('shortclick', function() {
 	    $('#status').removeClass('active');
 		$('#qrScanner').addClass('active');

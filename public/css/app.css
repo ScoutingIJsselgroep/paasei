@@ -79,6 +79,16 @@ label.input-group-append {
 	display: block;
 }
 
+.button#scanButton {
+	right: 10px;
+	top: 50px;
+}
+.button#refreshButton {
+	right: 10px;
+	top: 90px;
+	color: #000;
+}
+
 .button#centerMap {
 	right: 10px;
 	top: 50px;

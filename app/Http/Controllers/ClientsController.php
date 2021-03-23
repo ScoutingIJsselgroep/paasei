@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Client;
+use App\Models\ClientPoint;
 use App\Models\Point;
 use Carbon\Carbon;
 use Validator;
@@ -47,22 +48,105 @@ class ClientsController extends Controller {
 		}
 	}
 
+	public function start(Request $request) {
+		$client = Client::where('code', $request->code)->first();
+		if($client) {
+			$request->session()->put('client_id', $client->id);
+
+			if($client->clientPoints->count() == Point::count()) {
+				$finishedInSeconds = Carbon::parse($client->clientPoints()->max('created_at'))->timestamp - Carbon::parse($client->clientPoints()->min('created_at'))->timestamp;
+				return redirect('/')->with([
+					'message' => 'Dit was het laatste punt van de route. Jullie tijd: ' . format_seconds($finishedInSeconds),
+				]);
+			} else {
+				if(Carbon::now()->lt('2021-04-02 09:00')) {
+					return redirect('/')->with([
+						'message' => 'Vanaf 02-04-2021 09:00 kun je beginnen met zoeken!',
+					]);
+				} else {
+					return redirect('/')->with([
+						'message' => 'Je kunt nu gaan zoeken!',
+					]);
+				}
+			}
+		} else {
+			return redirect('/')->with([
+				'message' => 'Er is iets mis gegaan',
+			]);
+		}
+	}
 	public function search(Request $request) {
-	
 		if($request->session()->has('client_id')) {
 			$client = Client::find($request->session()->get('client_id'));
 		} else {
-			$client = false;	
+			$client = new Client;	
 		}
-
-		
 
 		return view('clients.search', [
 			'client' => $client,
-			'points' => Point::where('public', '=', 1)->get(),
 		]);
 	}
-			
+
+	public function check(Request $request) {
+		sleep(1);
+		
+		if($request->session()->has('client_id')) {
+			$client = Client::find($request->session()->get('client_id'));
+			if($client) {
+				$availablePoints = $client->availablePoints();
+				$totalPointCount = Point::count();
+
+				if($client->clientPoints->count() == $totalPointCount) {
+					$finishedInSeconds = Carbon::parse($client->clientPoints()->max('created_at'))->timestamp - Carbon::parse($client->clientPoints()->min('created_at'))->timestamp;
+					return redirect('/')->with([
+						'message' => 'Het laatste ei was al gevonden. Jullie tijd: ' . format_seconds($finishedInSeconds),
+					]);
+				}
+
+				foreach($availablePoints as $availablePoint) {
+					if($availablePoint->code == $request->code) {
+						if($availablePoint->found) {
+							return redirect('/')->with([
+								'message' => 'Deze code heb je al een keer gevonden, zoek nieuwe eieren op de andere plekken die je ziet op de kaart',
+							]);
+						} else {
+							$clientPoint = new ClientPoint;
+							$clientPoint->client_id = $client->id;
+							$clientPoint->point_id = $availablePoint->id;
+							$clientPoint->save();
+
+							$availablePoints = $client->availablePoints();
+							if($client->clientPoints->count() == $totalPointCount) {
+								$finishedInSeconds = Carbon::parse($client->clientPoints()->max('created_at'))->timestamp - Carbon::parse($client->clientPoints()->min('created_at'))->timestamp;
+								return redirect('/')->with([
+									'message' => 'Dit was het laatste ei! Jullie tijd: ' . format_seconds($finishedInSeconds),
+								]);
+							}
+							if($availablePoints->count() == $totalPointCount) {
+								return redirect('/')->with([
+									'message' => 'Nog een ei gevonden! Nog ' . ($totalPointCount - $client->clientPoints->count()) . ' te gaan',
+								]);
+							}
+							
+							return redirect('/')->with([
+								'message' => 'Hoera! Een ei gevonden, nu kun je ook op nieuwe plekken zoeken!',
+							]);
+						}
+					}
+				}
+			}
+			return redirect('/')->with([
+				'message' => 'Deze code zoeken we (nog) niet'
+			]);
+		} else {
+			return redirect('/')->with([
+				'message' => 'Het lijkt er op dat je de link in de mail nog niet hebt geopend',
+				// todo, button toevoegen
+				'button' => 'Ik heb me nog niet aangemeld'
+			]);
+		}
+	}
+
 	public function admin(Request $request) {
 		if($request->isMethod('post') && $request->add) {
 			$client = new Client;

@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Point extends Model {
 
+	public $found = false;
+
     /**
      * The attributes that are mass assignable.
      *
