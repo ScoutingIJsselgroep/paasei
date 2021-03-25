@@ -21,6 +21,8 @@ Route::post('check', ['as' => 'clients.check', 'uses' => 'ClientsController@chec
 
 Route::any('clients/add', ['as' => 'clients.add', 'uses' => 'ClientsController@add']);
 
+Route::get('score', ['uses' => 'ClientsController@score']);
+
 Route::name('admin.')->middleware('auth')->group(function () {
     Route::any('admin/points', ['as' => 'points', 'uses' => 'PointsController@admin']);
     Route::any('admin/clients', ['as' => 'clients', 'uses' => 'ClientsController@admin']);

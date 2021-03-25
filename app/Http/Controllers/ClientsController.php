@@ -15,6 +15,7 @@ use App\Models\ClientPoint;
 use App\Models\Point;
 use Carbon\Carbon;
 use Validator;
+use DB;
 
 /**
  * Description of ClientsController
@@ -61,11 +62,11 @@ class ClientsController extends Controller {
 			} else {
 				if(Carbon::now()->lt('2021-04-02 09:00')) {
 					return redirect('/')->with([
-						'message' => 'Vanaf 02-04-2021 09:00 kun je beginnen met zoeken!',
+						'message' => 'Vanaf vrijdag 02-04-2021 09:00 kun je beginnen met zoeken! Bewaar de e-mail, en gebruik de link dan opnieuw.',
 					]);
 				} else {
 					return redirect('/')->with([
-						'message' => 'Je kunt nu gaan zoeken!',
+						'message' => 'Je kunt nu gaan zoeken. Je kunt de link in de mail het hele weekend gebruiken, we onthouden welke eieren je al had gevonden!',
 					]);
 				}
 			}
@@ -90,7 +91,7 @@ class ClientsController extends Controller {
 	public function check(Request $request, string $code = null) {
 		sleep(1);
 		
-		if($code = null) {
+		if($code == null) {
 			$code = trim(str_replace(url('c'), '', $request->get('code', '')), '/');
 		}
 
@@ -144,11 +145,45 @@ class ClientsController extends Controller {
 			}
 		}
 		return redirect('/')->with([
-			'message' => 'Het lijkt er op dat je de link in de mail nog niet hebt geopend',
+			'message' => 'Het lijkt er op dat je de link in de mail nog niet hebt geopend, klik op de link in de mail en scan de code opnieuw, dan weten we straks of je een prijs gewonnen hebt!',
 			// todo, button toevoegen
-			'button' => 'Ik heb me nog niet aangemeld'
+			'button' => 'signup',
 		]);
 	}
+
+	public function score() {
+		$clients = Client::join('client_points', 'client_points.client_id', '=', 'clients.id')
+			->groupBy('clients.id')
+			->groupBy('clients.name')
+			->select(
+				'clients.id',
+				'clients.name',
+				DB::raw('count(client_points.id) as points'),
+				DB::raw('min(client_points.created_at) as first_point'),
+				DB::raw('max(client_points.created_at) as last_point'),
+			)
+			->orderByRaw('count(client_points.id) DESC')
+			->orderByRaw('max(client_points.created_at)');
+
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename=score.csv');
+		header('Content-Transfer-Encoding: binary');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Pragma: public');
+
+		$csv = fopen('php://output', 'w');
+		fputs($csv, "\xEF\xBB\xBF");
+		fputcsv($csv, ['id', 'name', 'points', 'first_point', 'last_point']);
+
+		foreach($clients->get() as $client) {
+			fputcsv($csv, $client->toArray());
+		}
+		fclose($csv);
+		die();
+	}
+
 
 	public function admin(Request $request) {
 		if($request->isMethod('post') && $request->add) {

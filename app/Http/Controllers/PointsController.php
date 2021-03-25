@@ -37,6 +37,7 @@ class PointsController extends Controller {
 			}
 			
 			$point->fill($request->all());
+			$point->code = trim(str_replace(url('c'), '', $request->get('code', '')), '/');
 			$point->save();
 			
 			return redirect()->back()->with([

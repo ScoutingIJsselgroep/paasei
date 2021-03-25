@@ -10,6 +10,8 @@
 	<div id="qrScanner" class="overlay">
 		<video muted playsinline autoplay></video>
 		<div class="button close"><i class="fa fa-times"></i></div>
+		<div class="text-overlay">Scan de code van het ei dat je gevonden hebt op een van de plekken die je ziet op de kaart</div>
+		
 		<form action="{{ route('clients.check') }}" method="POST" id="checkForm">
 			@csrf
 			<input id="code" name="code" type="hidden">
@@ -115,13 +117,7 @@
 		weight: 2,
 		dashArray: '3 4'
 	}).addTo(map);
-	var searchCode = false;
-	
-	var searchLine = L.polyline([], {
-		color: '#ff6600',
-		weight: 2,
-		dashArray: '3 4'
-	}).addTo(map);
+	var searchMarkers = [];
 	
 	
 	var positionHistory = [];
@@ -129,7 +125,6 @@
 		color: '#cc0000',
 		weight: 2
 	}).addTo(map);
-	
 	@foreach($client->availablePoints() as $point)
 		marker = L.marker([{{ $point->lat }}, {{ $point->lng }}], {
 			icon: L.eiIcon({
@@ -140,35 +135,23 @@
 			}),
 			point_id: '{{ $point->id }}',
 			opacity: '{{ $point->found ? 0.3 : 1.0 }}'
-		}).addTo(map).on('click', function() {
-			// todo
+		}).addTo(map);
+
+		@if($point->found)
+		marker.on('click', function() {
+			$('#status #message').text('Dit ei heb je al gevonden');
+			$('#status').addClass('active');
+			
 		});
+		@else
+		searchMarkers.push(marker);
+		@endif
 	@endforeach
 
-	@if($client && $client->route)
-		@php
-			$searchPoint = $client->route->startPoint;
-		@endphp
-		
-		@foreach($client->clientPoints as $clientPiont)
-			foundCodes.push([{{ $clientPiont->point->lat }}, {{ $clientPiont->point->lng }}]);
-			L.marker([{{ $clientPiont->point->lat }}, {{ $clientPiont->point->lng }}], {
-				icon: markerIcon
-			}).addTo(map);
-			
-			@php
-				$searchPoint = $clientPiont->point->nextPoint;
-			@endphp
-		@endforeach
-		foundLine.setLatLngs(foundCodes);
-		
-		@if($searchPoint)
-			searchCode = [{{ $searchPoint->lat }}, {{ $searchPoint->lng }}];
-			// weergeven als er wat weer te geven valt
-			//searchMarker.setLatLng(searchCode).addTo(map);
-			searchLine.setLatLngs([searchCode]);
-		@endif
-	@endif
+	@foreach($client->clientPoints as $clientPoint)
+		foundCodes.push([{{ $clientPoint->point->lat }}, {{ $clientPoint->point->lng }}]);
+	@endforeach
+	foundLine.setLatLngs(foundCodes);
 	
 	if (navigator.geolocation) {
 		var positionAccuracy = L.circle([52.20142, 6.20114], {
@@ -189,9 +172,6 @@
 			if(!positionHistory.length || positionHistory[positionHistory.length - 1][0] !== position.coords.latitude || positionHistory[positionHistory.length - 1][1] !== position.coords.longitude) {
 				positionHistory.push([position.coords.latitude, position.coords.longitude]);
 				positionHistoryLine.setLatLngs(positionHistory);
-				if(searchCode) {
-					searchLine.setLatLngs([searchCode, [position.coords.latitude, position.coords.longitude]]);
-				}
 			}
 		}
 		navigator.geolocation.watchPosition(currentPosition);
@@ -199,6 +179,10 @@
 	
 	@if(session()->has('message'))
 	$('#status #message').text('{{ session()->get('message') }}');
+	
+	@if(session()->get('button') == 'signup')
+	 	$('#status #message').append('<a href="https://scouting-ijsselgroep.nl/pasen/#aanmelden" class="btn btn-primary w-100 mt-3"><i class="fas fa-pencil-alt"></i> Ik heb me nog niet aangemeld</a>');
+	@endif
 	$('#status').addClass('active');
 	@endif
 </script>
@@ -219,15 +203,18 @@
 		
 	}
 	
-	/*searchMarker.on('click', function() {
-	    $('#status').removeClass('active');
-		$('#qrScanner').addClass('active');
-		scanner.start();
-		map.panInside(this.getLatLng(), {
-			paddingTopLeft: [25, window.innerWidth + 65],
-			paddingBottomRight: [25, 5]
+	searchMarkers.forEach(function(marker) {
+		marker.on('click', function() {
+			$('#status').removeClass('active');
+			$('#qrScanner').addClass('active');
+			scanner.start();
+			map.panInside(marker.getLatLng(), {
+				paddingTopLeft: [25, window.innerWidth + 65],
+				paddingBottomRight: [25, 5]
+			});
 		});
-	});*/
+	});
+	
 	
 	$('#qrScanner .button.close').click(function() {
 		scanner.stop();

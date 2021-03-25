@@ -37,6 +37,10 @@
 		@else
 			<span class="button" id="login"><i class="fas fa-key"></i></span>
 		@endif
+
+		@if(isset($client) && $client->exists())
+		<div class="user">{{ $client->name }}</div>
+		@endif
 	@endauth
 
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
