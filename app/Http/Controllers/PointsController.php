@@ -3,10 +3,11 @@
 use Illuminate\Http\Request;
 use App\Models\Point;
 use App\Models\Client;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class PointsController extends Controller {
 	public function admin(Request $request) {
-		
 		if($request->isMethod('post') && $request->add) {
 			$point = new Point;
 			$point->fill($request->all());
