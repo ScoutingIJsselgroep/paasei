@@ -140,11 +140,22 @@
 		
 	});
 	$('#addPoint').click(function() {
+		if(editMarker != newMarker) {
+			newMarker.addTo(map).setLatLng(map.getCenter()).bounce(1);
+			map.panBy([0, $('form#pointForm').height() / -2]);
+		}
+		editMarker = newMarker;
+
 		$('form#pointForm .edit').hide();
 		$('form#pointForm .add').show();
-		$('form#pointForm #icon-egg-1').prop('checked', true);
-		$('form#pointForm #pointColor').val('#ff0000');
-		$('form#pointForm #pointSecondColor').val('#0000ff');
+		$('form#pointForm #icon-egg-' + Math.ceil(Math.random() * 5)).prop('checked', true);
+		var color = randomColor(),
+			borderColor = randomColor();
+		$('form#pointForm #pointColor').val(color);
+		$('form#pointForm #pointSecondColor').val(borderColor);
+		$('form#pointForm #pointColor').colorpicker('setValue', color);
+		$('form#pointForm #pointSecondColor').colorpicker('setValue', borderColor);
+
 		$('form#pointForm #public').prop('checked', false);
 		
 		$('form#pointForm #lat').val(map.getCenter().lat);
@@ -155,18 +166,6 @@
 		$('form#pointForm #qr_code').val('');
 
 		$('form#pointForm').addClass('active');
-
-		newMarker.setIcon(L.eiIcon({
-			color: '#ff0000',
-			borderColor: '#0000ff',
-			html: '<i class="icon-egg-1"></i>'
-		}));
-		
-		if(editMarker != newMarker) {
-			newMarker.addTo(map).setLatLng(map.getCenter()).bounce(1);
-			map.panBy([0, $('form#pointForm').height() / -2]);
-		}
-		editMarker = newMarker;
 	});
 	$('form#pointForm .close').click(function() {
 		$('form#pointForm').removeClass('active');
@@ -180,13 +179,11 @@
 		editMarker = null;
 	});
 	
-	$('.color').colorpicker({
+	$('#pointColor').colorpicker({
 		useAlpha: false,
 		format: 'hex'
-	});
-
-	$('#pointColor').on('colorpickerChange', function(e) {
-		var borderColor = e.color.api('hsl');
+	}).on('colorpickerCreate colorpickerChange', function(e) {
+		var borderColor = $(this).colorpicker('color').api('hsl');
 		if(borderColor.api('lightness') < 50) {
 			borderColor._color.color[2] += (100 - borderColor._color.color[2]) * 0.25;
 		} else {
@@ -194,18 +191,23 @@
 		}
 		
         $('#pointColorPreview').css({
-			'background-color': e.color.toHexString(),
+			'background-color': $(this).colorpicker('getValue'),
 			'border-color': borderColor.toHexString(),
 			'color': borderColor.toHexString()
 		});
-		editMarker.setIcon(L.eiIcon({
-			color: $('#pointColor').val(),
-			borderColor: $('#pointSecondColor').val(),
-			html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
-		}));
+		if(editMarker) {
+			editMarker.setIcon(L.eiIcon({
+				color: $('#pointColor').val(),
+				borderColor: $('#pointSecondColor').val(),
+				html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
+			}));
+		}
 	});
-	$('#pointSecondColor').on('colorpickerChange', function(e) {
-		var borderColor = e.color.api('hsl');
+	$('#pointSecondColor').colorpicker({
+		useAlpha: false,
+		format: 'hex'
+	}).on('colorpickerCreate colorpickerChange', function(e) {
+		var borderColor = $(this).colorpicker('color').api('hsl');
 		if(borderColor.api('lightness') < 50) {
 			borderColor._color.color[2] += (100 - borderColor._color.color[2]) * 0.25;
 		} else {
@@ -213,15 +215,17 @@
 		}
 		
         $('#pointSecondColorPreview').css({
-			'background-color': e.color.toHexString(),
+			'background-color': $(this).colorpicker('getValue'),
 			'border-color': borderColor.toHexString(),
 			'color': borderColor.toHexString()
 		});
-		editMarker.setIcon(L.eiIcon({
-			color: $('#pointColor').val(),
-			borderColor: $('#pointSecondColor').val(),
-			html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
-		}));
+		if(editMarker) {
+			editMarker.setIcon(L.eiIcon({
+				color: $('#pointColor').val(),
+				borderColor: $('#pointSecondColor').val(),
+				html: '<i class="' + $('form#pointForm input[name=icon]:checked').val() + '"></i>'
+			}));
+		}
 	});
 	$('form#pointForm input[name=icon]').on('click change', function() {
 		editMarker.setIcon(L.eiIcon({
@@ -370,12 +374,15 @@
 				}
 				this.bounce(2);
 			}
+			editMarker = this;
 
 			$('form#pointForm .add').hide();
 			$('form#pointForm .edit').show();
 			$('form#pointForm #' + this.options.icon_class).prop('checked', true);
 			$('form#pointForm #pointColor').val(this.options.color);
 			$('form#pointForm #pointSecondColor').val(this.options.second_color);
+			$('form#pointForm #pointColor').colorpicker('setValue', this.options.color);
+			$('form#pointForm #pointSecondColor').colorpicker('setValue', this.options.second_color);
 			$('form#pointForm #public').prop('checked', this.options.public);
 			
 			$('form#pointForm #lat').val(this.getLatLng().lat);
@@ -391,7 +398,6 @@
 				paddingTopLeft: [25, $('form#pointForm').height() + 65],
 				paddingBottomRight: [25, 5]
 			});
-			editMarker = this;
 		}).on('dragend', function() {
 			$('form#pointForm #lat').val(this.getLatLng().lat);
 			$('form#pointForm #lng').val(this.getLatLng().lng);
@@ -422,11 +428,7 @@
 	$('#status .button.close').click(function() {
 		$('#status').removeClass('active');
 	});
-	
-	
-	
-	
-	
+
 </script>
 <script type="module">
 	import QrScanner from "./js/qr-scanner.js";
@@ -445,7 +447,6 @@
 	
 	$('#qr_code_label').on('click', function() {
 		$('form#pointForm').removeClass('active');
-		console.log($('form#pointForm'));
 		$('#qrScanner').addClass('active');
 		scanner.start();
 		map.panInside(editMarker.getLatLng(), {

@@ -59,6 +59,27 @@
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			}
 		});
+
+		function randomCharacters(length) {
+			var result = '',
+				characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+				charactersLength = characters.length,
+				length = length > 0 ? length : (5 + Math.ceil(Math.random() * 3));
+			for (var i = 0; i < length; i++) {
+				result += characters.charAt(Math.floor(Math.random() * charactersLength));
+			}
+			return result;
+		}
+
+		function randomColor() {
+			var result = '#',
+				characters = '0123456789abcdef',
+				charactersLength = characters.length;
+			for(var i = 0; i < 6; i++) {
+				result += characters.charAt(Math.floor(Math.random() * charactersLength));
+			}
+			return result;
+		}
 		
 		$('#fullScreen').click(function() {
 			if($(document.body).hasClass('fullscreen')) {
