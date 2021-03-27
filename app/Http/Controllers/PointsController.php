@@ -27,18 +27,20 @@ class PointsController extends Controller {
 					'message' => 'Punt niet gevonden',
 				]);
 			}
-			if($request->code !== null && Point::where('code', '=', $request->code)->where('id', '<>', $point->id)->exists()) {
-				return redirect()->back()->with([
-					'mapCenter' => [
-						$request->lat,
-						$request->lng
-					],
-					'message' => 'QR code is al in gebruik',
-				]);
-			}
 			
 			$point->fill($request->all());
-			$point->code = trim(str_replace(url('c'), '', $request->get('code', '')), '/');
+			if($request->code !== null) {
+				$point->code = trim(str_replace(url('c'), '', $request->get('code', '')), '/');
+				if(Point::where('code', '=', $point->code)->where('id', '<>', $point->id)->exists()) {
+					return redirect()->back()->with([
+						'mapCenter' => [
+							$request->lat,
+							$request->lng
+						],
+						'message' => 'QR code is al in gebruik',
+					]);
+				}
+			}
 			$point->save();
 			
 			return redirect()->back()->with([
