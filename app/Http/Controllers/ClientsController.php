@@ -58,7 +58,8 @@ class ClientsController extends Controller {
 			if($client->clientPoints->count() == Point::count()) {
 				$finishedInSeconds = Carbon::parse($client->clientPoints()->max('created_at'))->timestamp - Carbon::parse($client->clientPoints()->min('created_at'))->timestamp;
 				return redirect('/')->with([
-					'message' => 'Dit was het laatste punt van de route. Jullie tijd: ' . format_seconds($finishedInSeconds),
+					'message' => 'Alle eieren zijn gevonden! Jullie tijd: ' . format_seconds($finishedInSeconds) . '. Kijk na 5 april weer op de website om te zien of je in de top 3 gekomen bent!',
+					'button' => 'scores',
 				]);
 			} else {
 				if(Carbon::now()->lt('2021-04-02 09:00')) {
@@ -105,7 +106,8 @@ class ClientsController extends Controller {
 				if($client->clientPoints->count() == $totalPointCount) {
 					$finishedInSeconds = Carbon::parse($client->clientPoints()->max('created_at'))->timestamp - Carbon::parse($client->clientPoints()->min('created_at'))->timestamp;
 					return redirect('/')->with([
-						'message' => 'Het laatste ei was al gevonden. Jullie tijd: ' . format_seconds($finishedInSeconds),
+						'message' => 'Het laatste ei was al gevonden. Jullie tijd: ' . format_seconds($finishedInSeconds) . '. Kijk na 5 april weer op de website om te zien of je in de top 3 gekomen bent!',
+						'button' => 'scores',
 					]);
 				}
 
@@ -125,7 +127,8 @@ class ClientsController extends Controller {
 							if($client->clientPoints->count() == $totalPointCount) {
 								$finishedInSeconds = Carbon::parse($client->clientPoints()->max('created_at'))->timestamp - Carbon::parse($client->clientPoints()->min('created_at'))->timestamp;
 								return redirect('/')->with([
-									'message' => 'Dit was het laatste ei! Jullie tijd: ' . format_seconds($finishedInSeconds),
+									'message' => 'Dit was het laatste ei! Jullie tijd: ' . format_seconds($finishedInSeconds) . '. Kijk na 5 april weer op de website om te zien of je in de top 3 gekomen bent!',
+									'button' => 'scores',
 								]);
 							}
 							if($availablePoints->count() == $totalPointCount) {
@@ -147,7 +150,6 @@ class ClientsController extends Controller {
 		}
 		return redirect('/')->with([
 			'message' => 'Het lijkt er op dat je de link in de mail nog niet hebt geopend, klik op de link in de mail en scan de code opnieuw, dan weten we straks of je een prijs gewonnen hebt!',
-			// todo, button toevoegen
 			'button' => 'signup',
 		]);
 	}

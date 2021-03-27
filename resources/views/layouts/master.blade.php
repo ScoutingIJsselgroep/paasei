@@ -34,12 +34,14 @@
 	@else
 		@if(request()->is('login'))
 			<a href="/" class="button" id="login"><i class="fas fa-home"></i></a>
+		@elseif(isset($client) && $client->exists)
+		<form id="logout-form" action="{{ route('logout') }}" method="POST">
+			@csrf
+			<button class="button"><i class="fas fa-unlock-alt"></i></button>
+			<div class="user">{{ $client->name }}</div>
+		</form>
 		@else
 			<span class="button" id="login"><i class="fas fa-key"></i></span>
-		@endif
-
-		@if(isset($client) && $client->exists())
-		<div class="user">{{ $client->name }}</div>
 		@endif
 	@endauth
 

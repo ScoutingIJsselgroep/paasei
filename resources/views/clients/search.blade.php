@@ -181,7 +181,9 @@
 	$('#status #message').text('{{ session()->get('message') }}');
 	
 	@if(session()->get('button') == 'signup')
-	 	$('#status #message').append('<a href="https://scouting-ijsselgroep.nl/pasen/#aanmelden" class="btn btn-primary w-100 mt-3"><i class="fas fa-pencil-alt"></i> Ik heb me nog niet aangemeld</a>');
+		$('#status #message').append('<a href="https://scouting-ijsselgroep.nl/pasen/#aanmelden" class="btn btn-primary w-100 mt-3"><i class="fas fa-pencil-alt"></i> Ik heb me nog niet aangemeld</a>');
+	@elseif(session()->get('button') == 'scores')
+		$('#status #message').append('<a href="https://scouting-ijsselgroep.nl/pasen/#highscore" class="btn btn-primary w-100 mt-3"><i class="fas fa-award"></i> Bekijk de scores</a>');
 	@endif
 	$('#status').addClass('active');
 	@endif
