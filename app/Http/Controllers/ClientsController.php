@@ -62,15 +62,9 @@ class ClientsController extends Controller {
 					'button' => 'scores',
 				]);
 			} else {
-				if(Carbon::now()->lt('2021-04-02 09:00')) {
-					return redirect('/')->with([
-						'message' => 'Vanaf vrijdag 02-04-2021 09:00 kun je beginnen met zoeken! Bewaar de e-mail, en gebruik de link dan opnieuw.',
-					]);
-				} else {
-					return redirect('/')->with([
-						'message' => 'Je kunt nu gaan zoeken. Je kunt de link in de mail het hele weekend gebruiken, we onthouden welke eieren je al had gevonden!',
-					]);
-				}
+				return redirect('/')->with([
+					'message' => 'Je kunt nu gaan zoeken. Je kunt de link in de mail het hele weekend gebruiken, we onthouden welke eieren je al had gevonden!',
+				]);
 			}
 		} else {
 			return redirect('/')->with([
